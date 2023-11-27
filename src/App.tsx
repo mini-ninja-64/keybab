@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { Dimension, KeyElement } from './components/Key/Key'
 import { KeyDisplay } from './components/KeyDisplay/KeyDisplay'
-import { parse } from './utils/kle'
+import { convert, parse } from './utils/kle'
 import { KeyData } from './components/KeyData/KeyData'
 
 type KeyModifierFunction = (key: KeyElement) =>void;
@@ -41,7 +41,7 @@ function App() {
   const [selection, setSelection] = useState<Set<number>>(new Set());
 
   const jsonKeys = useMemo(() => JSON.stringify(keys),[keys]);
-
+  const generatedKle = useMemo(() => JSON.stringify(convert(keys)),[keys]);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -88,6 +88,8 @@ function App() {
     }} value={kle}/>
     <h2>Normalized keys:</h2>
     <textarea value={jsonKeys}/>
+    <h2>Generated KLE:</h2>
+    <textarea value={generatedKle}/>
     <KeyDisplay keyElements={keys} selectedKeys={selection} setSelectedKeys={setSelection}/>
     <KeyData selectedKeys={selection} keyElements={keys} setKeyElements={setKeys}/>
     <div> hi smelly2</div>

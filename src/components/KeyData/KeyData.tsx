@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { KeyElement } from "../Key/Key";
 import { deepCopy } from "deep-copy-ts";
-import { recurseObject, resolvePath, setPath } from "../../utils/objects";
+import { recurse, resolvePath, setPath } from "../../utils/objects";
 
 export function KeyData(props: {selectedKeys: Set<number>, keyElements: KeyElement[], setKeyElements: (keys: KeyElement[]) => void}) {
     const commonKeyData = useMemo<RecursivePartial<KeyElement> | undefined>(() => {
@@ -13,16 +13,19 @@ export function KeyData(props: {selectedKeys: Set<number>, keyElements: KeyEleme
         const commonKey: RecursivePartial<KeyElement> = deepCopy(selectedKeys[0]);
         selectedKeys
             .forEach((keyElement) => {
-                recurseObject(keyElement, (_key, value, path) => {
+                recurse(keyElement, (_key, value, path) => {
                     if(value !== resolvePath(commonKey, path)) setPath(commonKey, path, undefined);
                 })
             });
         return commonKey;
     }, [props.selectedKeys, props.keyElements])
 
-
     return <form>
         <h3>Selected Keys: {[...props.selectedKeys].join(", ")}</h3>
+        {commonKeyData?.content?.text?.map((line, index) => 
+            <h4>content {index}: {line.join(", ")}</h4>)
+        }
+
         <h4>X: {commonKeyData?.position?.x}</h4>
         <h4>Y: {commonKeyData?.position?.y}</h4>
 
